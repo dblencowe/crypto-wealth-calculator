@@ -6,8 +6,8 @@ class Currency implements \JsonSerializable
 {
     private $code;
     private $latestRate;
-    private $balance = 0.0;
-    private $lastBalance = 0.0;
+    private $balance;
+    private $lastBalance;
 
     public function __construct(string $code, float $latestRate, float $balance = 0.0, float $lastBalance = null)
     {
