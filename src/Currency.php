@@ -13,7 +13,6 @@ class Currency implements \JsonSerializable
     {
         $this->code = $code;
         $this->latestRate = $latestRate;
-        $this->lastBalance = $this->balance;
         if ($lastBalance) {
             $this->lastBalance = $lastBalance;
         }
@@ -105,6 +104,11 @@ class Currency implements \JsonSerializable
         return $this->balance / $this->latestRate;
     }
 
+    public function change()
+    {
+        return $this->wealth() - $this->lastBalance;
+    }
+
     /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -118,6 +122,7 @@ class Currency implements \JsonSerializable
             'code' => $this->code,
             'balance' => $this->balance,
             'latestRate' => $this->latestRate,
+            'wealth' => $this->wealth(),
         ];
     }
 }

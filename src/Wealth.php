@@ -40,7 +40,7 @@ class Wealth
     {
         $currencies = json_decode(file_get_contents(__DIR__ . '/../storage/currencies.json'));
         foreach ($currencies as $currencyCode => $currency) {
-            $this->currencies[$currencyCode] = new Currency($currencyCode, $currency->latestRate, $currency->balance, $currency->balance);
+            $this->currencies[$currencyCode] = new Currency($currencyCode, $currency->latestRate, $currency->balance, $currency->wealth);
         }
     }
 
@@ -50,7 +50,13 @@ class Wealth
         $currencies = json_decode($response->getBody()->getContents());
 
         foreach ($currencies as $currencyCode => $rate) {
-            $this->currencies[$currencyCode] = new Currency($currencyCode, $rate, $this->lookupCurrencies[$currencyCode]);
+            if (is_object($this->currencies[$currencyCode]) && get_class($this->currencies[$currencyCode]) === Currency::class) {
+                /** @var Currency $curr */
+                $curr = $this->currencies[$currencyCode];
+                $curr->setLatestRate($rate);
+            } else {
+                $this->currencies[$currencyCode] = new Currency($currencyCode, $rate, $this->lookupCurrencies[$currencyCode]);
+            }
         }
     }
 
@@ -59,7 +65,9 @@ class Wealth
         setlocale(LC_MONETARY, $this->locale);
         /** @var Currency $currency */
         foreach ($this->currencies as $currency) {
-            echo sprintf('%s: %s' . PHP_EOL, $currency->getCode(), money_format('%.2n', $currency->wealth()));
+            $balance = money_format('%.2n', $currency->wealth());
+            $change = money_format('%.2n', $currency->change());
+            echo sprintf('%s: %s (%s)' . PHP_EOL, $currency->getCode(), $balance, $change);
         }
     }
 }
