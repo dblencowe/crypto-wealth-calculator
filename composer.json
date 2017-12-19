@@ -13,6 +13,10 @@
         }
     },
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
-    }
+        "guzzlehttp/guzzle": "^6.3",
+        "vlucas/phpdotenv": "^2.4"
+    },
+    "post-create-project-cmd": [
+        "php -r \"copy('.env.example', '.env');\""
+    ]
 }

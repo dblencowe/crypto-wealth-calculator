@@ -7,11 +7,16 @@ class Currency implements \JsonSerializable
     private $code;
     private $latestRate;
     private $balance = 0.0;
+    private $lastBalance = 0.0;
 
-    public function __construct(string $code, float $latestRate, float $balance = 0.0)
+    public function __construct(string $code, float $latestRate, float $balance = 0.0, float $lastBalance = null)
     {
         $this->code = $code;
         $this->latestRate = $latestRate;
+        $this->lastBalance = $this->balance;
+        if ($lastBalance) {
+            $this->lastBalance = $lastBalance;
+        }
         $this->balance = $balance;
     }
 
@@ -73,6 +78,23 @@ class Currency implements \JsonSerializable
         $this->balance = $balance;
 
         return $this;
+    }
+
+    /**
+     * @param float $balance
+     *
+     * @return Currency
+     */
+    public function setLastBalance(float $balance): Currency
+    {
+        $this->lastBalance = $balance;
+
+        return $this;
+    }
+
+    public function getLastBalance(): float
+    {
+        return $this->lastBalance;
     }
 
     /**

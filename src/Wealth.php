@@ -6,21 +6,17 @@ use GuzzleHttp\Client;
 
 class Wealth
 {
-    private $lookupCurrencies = [
-        'BTC' => 0.0185722,
-        'LTC' => 1,
-        'ADA' => 1005.992000,
-        'XLM' => 731.258,
-        'ETH' => 0.55173161,
-    ];
-    private $locale = 'en_GB';
+    private $lookupCurrencies;
+    private $locale;
     private $client;
     private $baseCurrency;
     private $currencies;
 
-    public function __construct(string $baseCurrency = 'GBP', bool $refresh = false)
+    public function __construct(string $baseCurrency = 'GBP', $lookupCurrencies, $locale = 'en_GB', bool $refresh = false)
     {
-        $this->baseCurrency = $baseCurrency;
+        $this->baseCurrency = strtoupper($baseCurrency);
+        $this->lookupCurrencies = $lookupCurrencies;
+        $this->locale = $locale;
         $this->client = new Client([
             'base_uri' => 'https://min-api.cryptocompare.com',
         ]);
@@ -44,7 +40,7 @@ class Wealth
     {
         $currencies = json_decode(file_get_contents(__DIR__ . '/../storage/currencies.json'));
         foreach ($currencies as $currencyCode => $currency) {
-            $this->currencies[$currencyCode] = new Currency($currencyCode, $currency->latestRate, $currency->balance);
+            $this->currencies[$currencyCode] = new Currency($currencyCode, $currency->latestRate, $currency->balance, $currency->balance);
         }
     }
 
