@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5708256ee407ffbcad55d5baf90dd09f",
+    "content-hash": "0425f3012c63f32c78eec4f24f9efc01",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -186,6 +186,39 @@
                 "url"
             ],
             "time": "2017-03-20T17:10:46+00:00"
+        },
+        {
+            "name": "phplucidframe/console-table",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dblencowe/console-table.git",
+                "reference": "9fb89662b209e6e1f3678bac726298fe7cbb2bf0"
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "LucidFrame\\": "src/",
+                    "LucidFrameTest\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sithu K.",
+                    "email": "cithukyaw@gmail.com"
+                }
+            ],
+            "description": "Console Table",
+            "time": "2017-12-19T13:51:12+00:00"
         },
         {
             "name": "psr/http-message",

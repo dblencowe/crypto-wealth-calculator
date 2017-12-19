@@ -3,6 +3,7 @@
 namespace Dblencowe\Wealth;
 
 use GuzzleHttp\Client;
+use LucidFrame\Console\ConsoleTable;
 
 class Wealth
 {
@@ -63,11 +64,27 @@ class Wealth
     public function run()
     {
         setlocale(LC_MONETARY, $this->locale);
+
+        $table = new ConsoleTable();
+        $table->setHeaders(['Currency', 'Current Wealth', 'Change']);
+
         /** @var Currency $currency */
         foreach ($this->currencies as $currency) {
             $balance = money_format('%.2n', $currency->wealth());
             $change = money_format('%.2n', $currency->change());
-            echo sprintf('%s: %s (%s)' . PHP_EOL, $currency->getCode(), $balance, $change);
+            $table->addRow([$currency->getCode(), $balance, $this->outputChange($currency, $change)]);
         }
+
+        $table->setPadding(3)->display();
+    }
+
+    private function outputChange(Currency $currency, string $display)
+    {
+        $fg = '1;31';
+        if ((float) $currency->change() >= 0) {
+            $fg = '1;32';
+        }
+
+        return sprintf("\e[%sm%s\e[0m", $fg, $display);
     }
 }
