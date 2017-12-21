@@ -55,6 +55,7 @@ class Wealth
                 /** @var Currency $curr */
                 $curr = $this->currencies[$currencyCode];
                 $curr->setLatestRate($rate);
+                $curr->setBalance($this->lookupCurrencies[$currencyCode]);
             } else {
                 $this->currencies[$currencyCode] = new Currency($currencyCode, $rate, $this->lookupCurrencies[$currencyCode]);
             }
