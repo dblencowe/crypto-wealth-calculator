@@ -54,8 +54,8 @@ class Wealth
             if (is_object($this->currencies[$currencyCode]) && get_class($this->currencies[$currencyCode]) === Currency::class) {
                 /** @var Currency $curr */
                 $curr = $this->currencies[$currencyCode];
-                $curr->setLatestRate($rate);
-                $curr->setBalance($this->lookupCurrencies[$currencyCode]);
+                $curr->setLatestRate($rate)
+                     ->setBalance($this->lookupCurrencies[$currencyCode]);
             } else {
                 $this->currencies[$currencyCode] = new Currency($currencyCode, $rate, $this->lookupCurrencies[$currencyCode]);
             }
