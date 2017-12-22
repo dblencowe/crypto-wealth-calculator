@@ -8,7 +8,7 @@ $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
 $currencyCode = getenv('BASE_CURRENCY');
-$refresh = $argv[2] ?? false;
+$refresh = $argv[2] ?? true;
 $lookupCurrencies = (array) json_decode(getenv('CURRENCIES'));
 $locale = getenv('LOCALE');
 
