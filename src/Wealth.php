@@ -39,7 +39,14 @@ class Wealth
 
     private function loadCurrencies()
     {
-        $currencies = json_decode(file_get_contents(__DIR__ . '/../storage/currencies.json'));
+        $file = __DIR__ . '/../storage/currencies.json';
+        if (!is_file(__DIR__ . '/../storage/currencies.json')) {
+            $this->getCurrencies();
+
+            return;
+        }
+
+        $currencies = json_decode(file_get_contents($file));
         foreach ($currencies as $currencyCode => $currency) {
             $this->currencies[$currencyCode] = new Currency($currencyCode, $currency->latestRate, $currency->balance, $currency->wealth);
         }
@@ -51,7 +58,7 @@ class Wealth
         $currencies = json_decode($response->getBody()->getContents());
 
         foreach ($currencies as $currencyCode => $rate) {
-            if (is_object($this->currencies[$currencyCode]) && get_class($this->currencies[$currencyCode]) === Currency::class) {
+            if (isset($this->currencies[$currencyCode]) && is_object($this->currencies[$currencyCode]) && get_class($this->currencies[$currencyCode]) === Currency::class) {
                 /** @var Currency $curr */
                 $curr = $this->currencies[$currencyCode];
                 $curr->setLatestRate($rate)
