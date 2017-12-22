@@ -2,6 +2,7 @@
 
 namespace Dblencowe\Wealth;
 
+use Dblencowe\Wealth\Exceptions\CurrencyException;
 use GuzzleHttp\Client;
 use LucidFrame\Console\ConsoleTable;
 
@@ -15,6 +16,10 @@ class Wealth
 
     public function __construct(string $baseCurrency = 'GBP', $lookupCurrencies, $locale = 'en_GB', bool $refresh = false)
     {
+        if (empty($lookupCurrencies)) {
+            throw new CurrencyException('Please specify currencies to lookup');
+        }
+
         $this->baseCurrency = strtoupper($baseCurrency);
         $this->lookupCurrencies = $lookupCurrencies;
         $this->locale = $locale;
@@ -55,9 +60,17 @@ class Wealth
     private function getCurrencies()
     {
         $response = $this->client->request('GET', "/data/price?fsym={$this->baseCurrency}&tsyms="  . implode(',', array_keys($this->lookupCurrencies)));
-        $currencies = json_decode($response->getBody()->getContents());
 
-        foreach ($currencies as $currencyCode => $rate) {
+        $responseBody = json_decode($response->getBody()->getContents());
+        if ($response->getStatusCode() !== 200 || $responseBody->Response === 'Error') {
+            throw new CurrencyException('Error fetching currencies: ' . $responseBody->Message);
+        }
+
+        foreach ($responseBody as $currencyCode => $rate) {
+            if (!is_float($rate)) {
+                throw new CurrencyException($currencyCode . ' balance must be represented as a float');
+            }
+
             if (isset($this->currencies[$currencyCode]) && is_object($this->currencies[$currencyCode]) && get_class($this->currencies[$currencyCode]) === Currency::class) {
                 /** @var Currency $curr */
                 $curr = $this->currencies[$currencyCode];
