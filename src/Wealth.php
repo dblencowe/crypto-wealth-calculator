@@ -53,8 +53,6 @@ class Wealth
 
         $currencies = json_decode(file_get_contents($file));
 
-        // print json_encode($currencies, JSON_PRETTY_PRINT);
-
         foreach ($currencies as $currencyCode => $currency) {
             $this->currencies[$currencyCode] = new Currency($currencyCode, $currency->latestRate, $currency->balance, $currency->wealth);
         }
