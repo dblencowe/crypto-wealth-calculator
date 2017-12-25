@@ -52,6 +52,7 @@ class Wealth
         }
 
         $currencies = json_decode(file_get_contents($file));
+
         foreach ($currencies as $currencyCode => $currency) {
             $this->currencies[$currencyCode] = new Currency($currencyCode, $currency->latestRate, $currency->balance, $currency->wealth);
         }
@@ -82,6 +83,28 @@ class Wealth
         }
     }
 
+    private function calculateTotalValue(): float
+    {
+        $total = 0.0;
+
+        foreach($this->currencies as $currency) {
+            $total += $currency -> wealth();
+        }
+
+        return $total;
+    }
+
+    private function calculatePreviousValue(): float
+    {
+        $total = 0.0;
+
+        foreach($this->currencies as $currency) {
+            $total += $currency -> change();
+        }
+
+        return $total;
+    }
+
     public function run()
     {
         setlocale(LC_MONETARY, $this->locale);
@@ -91,21 +114,34 @@ class Wealth
 
         /** @var Currency $currency */
         foreach ($this->currencies as $currency) {
+
+            $amountChanged = $currency->change();
+
             $balance = money_format('%.2n', $currency->wealth());
-            $change = money_format('%.2n', $currency->change());
-            $table->addRow([$currency->getCode(), $balance, $this->outputChange($currency, $change)]);
+            $change = money_format('%.2n', $amountChanged);
+            $table->addRow([$currency->getCode(), $balance, $this->outputChange($amountChanged, $change)]);
         }
+
+        // Add total line to it
+        $table->addRow(["--------","-----------","-----"]);
+
+        // Add the total and change in total
+        $amountChanged = $this->calculatePreviousValue();
+        $prevTotal = money_format('%.2n', $amountChanged);
+        $total = money_format('%.2n', $this->calculateTotalValue());
+        $table->addRow(["Total", $total, $this->outputChange($amountChanged,$prevTotal)]);
 
         $table->setPadding(3)->display();
     }
 
-    private function outputChange(Currency $currency, string $display)
+    private function outputChange(float $changeValue, string $display)
     {
         $fg = '1;31';
-        if ((float) $currency->change() >= 0) {
+        if ( $changeValue >= 0) {
             $fg = '1;32';
         }
 
         return sprintf("\e[%sm%s\e[0m", $fg, $display);
     }
+
 }
